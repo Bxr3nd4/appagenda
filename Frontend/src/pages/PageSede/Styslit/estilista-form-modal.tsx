@@ -275,7 +275,7 @@ export function EstilistaFormModal({ isOpen, onClose, onSave, estilista, isSavin
 
   const getSedeNombre = () => {
     const sedeSeleccionada = sedes.find(s => s.sede_id === formData.sede_id)
-    return sedeSeleccionada ? `${sedeSeleccionada.nombre} (${sedeSeleccionada.sede_id})` : "Seleccionar sede"
+    return sedeSeleccionada ? sedeSeleccionada.nombre : "Seleccionar sede"
   }
 
   const stopPropagation = (e: React.MouseEvent) => {
@@ -358,8 +358,9 @@ export function EstilistaFormModal({ isOpen, onClose, onSave, estilista, isSavin
                     }`}
                   >
                     <div className="font-medium">{sede.nombre}</div>
-                    <div className="text-sm text-gray-500">ID: {sede.sede_id}</div>
-                    <div className="text-sm text-gray-500 truncate">{sede.direccion}</div>
+                    {sede.direccion && (
+                      <div className="text-sm text-gray-500 truncate">{sede.direccion}</div>
+                    )}
                   </button>
                 ))}
                 {sedes.length === 0 && (

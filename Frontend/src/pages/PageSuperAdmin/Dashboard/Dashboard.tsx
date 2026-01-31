@@ -1123,7 +1123,7 @@ export default function DashboardPage() {
                                 </div>
                               </div>
                               <p className="text-sm text-gray-500 mt-2">
-                                Período: {getPeriodDisplay()} • Sede ID: {selectedSede}
+                                Período: {getPeriodDisplay()}
                               </p>
                             </div>
                           </div>
@@ -1478,9 +1478,6 @@ export default function DashboardPage() {
                                 <p className="text-xs text-gray-600 truncate">{sede.direccion}</p>
                                 <p className="text-xs text-gray-600 mt-1">{sede.telefono}</p>
                                 <div className="flex items-center justify-between mt-2">
-                                  <span className="text-xs text-gray-500">
-                                    ID: {sede.sede_id}
-                                  </span>
                                   {selectedSede === sede.sede_id && (
                                     <Badge className="bg-gray-900 text-white text-xs">
                                       Seleccionada

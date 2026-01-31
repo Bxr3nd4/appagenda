@@ -816,7 +816,6 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Error al cargar datos</h3>
               <p className="text-gray-500 mb-4">{error}</p>
               <div className="space-y-2 mb-6 text-sm text-gray-600">
-                <p>Sede ID: {selectedSede}</p>
                 <p>Período: {getPeriodDisplay()}</p>
                 <p>Moneda: {metricas.moneda} • País: {user?.pais || 'No especificado'}</p>
               </div>
@@ -1161,7 +1160,6 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold text-gray-700 mb-2">No hay datos financieros disponibles</h3>
               <p className="text-gray-500 mb-4">No se pudieron cargar los datos del dashboard de ventas.</p>
               <div className="space-y-2 mb-6 text-sm text-gray-600">
-                <p>Sede ID: {selectedSede}</p>
                 <p>Período: {getPeriodDisplay()}</p>
                 <p>Moneda: {metricas.moneda} • País: {user?.pais || 'No especificado'}</p>
                 <p className="text-xs text-gray-500">Verifica que la API de ventas esté funcionando correctamente</p>

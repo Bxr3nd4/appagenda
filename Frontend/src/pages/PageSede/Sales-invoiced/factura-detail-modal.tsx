@@ -225,7 +225,7 @@ export function FacturaDetailModal({ factura, open, onOpenChange }: FacturaDetai
                             <div>
                               <p className="font-medium text-gray-900">{item.nombre || ''}</p>
                               <p className="text-xs text-gray-500 capitalize">
-                                {item.tipo || 'servicio'} • {item.servicio_id || item.producto_id || "N/A"}
+                                {item.tipo || 'servicio'}
                               </p>
                             </div>
                           </div>

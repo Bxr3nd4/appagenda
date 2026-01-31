@@ -299,7 +299,7 @@ export function ProductsList() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <Input
-                    placeholder="Buscar productos por nombre, ID o código..."
+                    placeholder="Buscar productos por nombre o categoría..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 border-gray-300 focus:border-gray-400 focus:ring-gray-400"
@@ -502,13 +502,8 @@ export function ProductsList() {
                                   <h4 className="text-sm font-semibold text-gray-900 truncate">
                                     {producto.nombre}
                                   </h4>
-                                  <Badge variant="outline" className="text-xs">
-                                    {producto.producto_id}
-                                  </Badge>
                                 </div>
                                 <div className="flex items-center flex-wrap gap-3 text-xs text-gray-500">
-                                  <span>Código: {producto.producto_codigo}</span>
-                                  <span>•</span>
                                   <span>Categoría: {producto.categoria || "Sin categoría"}</span>
                                   <span>•</span>
                                   <span>Mínimo: {producto.stock_minimo}</span>

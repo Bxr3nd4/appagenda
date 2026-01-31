@@ -204,7 +204,7 @@ export function ComisionesFilters({ onFiltersChange }: ComisionesFiltersProps) {
                   value={sede._id}
                   className="bg-white hover:bg-gray-100 text-gray-900"
                 >
-                  {sede.nombre} ({sede.sede_id})
+                  {sede.nombre}
                 </SelectItem>
               ))
             ) : (

@@ -129,7 +129,7 @@ export function ComisionesPendientes() {
             <option value="">-- Selecciona una sede --</option>
             {sedes.map((sede) => (
               <option key={sede._id} value={sede._id}>
-                {sede.nombre} {sede.sede_id ? `(${sede.sede_id})` : ''}
+                {sede.nombre}
               </option>
             ))}
           </select>
