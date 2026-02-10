@@ -11,7 +11,13 @@ import { sedeService } from "../../PageSuperAdmin/Sedes/sedeService"
 import { useAuth } from "../../../components/Auth/AuthContext"
 import { Loader } from "lucide-react"
 
-const SEARCH_DEBOUNCE_MS = 500
+
+// Interface para la respuesta de la API
+interface ApiResponse {
+  clientes?: any[];
+  data?: any[];
+  [key: string]: any;
+}
 
 // Función para asegurar que un objeto cumpla con la interfaz Cliente
 const asegurarClienteCompleto = (clienteData: any): Cliente => {
@@ -38,8 +44,15 @@ const asegurarClienteCompleto = (clienteData: any): Cliente => {
 export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<Cliente | null>(null)
   const [clientes, setClientes] = useState<Cliente[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [metadata, setMetadata] = useState<ClientesPaginadosMetadata | null>(null)
+  const [searchTerm, setSearchTerm] = useState("") // ✅ NUEVO
+  const [metadata, setMetadata] = useState<{
+    total: number;
+    pagina: number;
+    limite: number;
+    total_paginas: number;
+    tiene_siguiente: boolean;
+    tiene_anterior: boolean;
+  } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -90,6 +103,16 @@ export default function ClientsPage() {
   }
 
   useEffect(() => {
+  if (!user?.access_token) return
+
+  const timeout = setTimeout(() => {
+    loadClientes(1, searchTerm)
+  }, 600)
+
+  return () => clearTimeout(timeout)
+}, [searchTerm])
+
+  useEffect(() => {
     if (!authLoading && user) {
       loadSedes()
     }
@@ -110,7 +133,12 @@ export default function ClientsPage() {
   }
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
+  setSearchTerm(value)
+}
+
+
+  const handleSearch = (filtro: string) => {
+    loadClientes(1, filtro)
   }
 
   const handleSelectClient = async (client: Cliente) => {
@@ -139,6 +167,11 @@ export default function ClientsPage() {
 
       if (!sedeIdToUse) {
         throw new Error("No hay sedes disponibles")
+      }
+
+
+      if (!sedeIdToUse) {
+        throw new Error('No hay sedes disponibles')
       }
 
       const createData = {
@@ -238,7 +271,8 @@ export default function ClientsPage() {
               isLoading={isLoading}
               onPageChange={handlePageChange}
               onSearch={handleSearch}
-              searchValue={searchTerm}
+              searchValue={searchTerm}   // 👈 ESTO
+            
             />
           </>
         )}

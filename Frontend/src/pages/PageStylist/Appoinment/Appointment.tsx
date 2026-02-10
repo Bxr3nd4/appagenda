@@ -45,6 +45,41 @@ const obtenerNombresServicios = (cita: any): string => {
   return 'Sin servicio';
 };
 
+// ⭐ HELPER: Calcular precio total de una cita con múltiples servicios
+const calcularPrecioTotalCita = (cita: any): number => {
+  // Si tiene array de servicios (nuevo formato)
+  if (cita.servicios && Array.isArray(cita.servicios) && cita.servicios.length > 0) {
+    return cita.servicios.reduce((total: number, servicio: any) => {
+      return total + (servicio.precio || 0);
+    }, 0);
+  }
+  
+  // Si tiene servicio único (formato antiguo - compatibilidad)
+  if (cita.servicio?.precio) {
+    return cita.servicio.precio;
+  }
+  
+  // Si tiene precio_total directo
+  if (cita.precio_total) {
+    return cita.precio_total;
+  }
+  
+  return 0;
+};
+
+// ⭐ HELPER: Obtener nombres de servicios concatenados
+const obtenerNombresServicios = (cita: any): string => {
+  if (cita.servicios && Array.isArray(cita.servicios) && cita.servicios.length > 0) {
+    return cita.servicios.map((s: any) => s.nombre).join(', ');
+  }
+  
+  if (cita.servicio?.nombre) {
+    return cita.servicio.nombre;
+  }
+  
+  return 'Sin servicio';
+};
+
 export default function VistaEstilistaPage() {
   const { 
     citas, 

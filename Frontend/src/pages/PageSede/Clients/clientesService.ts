@@ -240,35 +240,87 @@ export const clientesService = {
     const data = await response.json();
     let rawClientes: any[] = [];
 
-    if (data?.clientes && Array.isArray(data.clientes)) {
-      rawClientes = data.clientes;
-    } else if (Array.isArray(data)) {
-      rawClientes = data;
-    } else if (data?.data && Array.isArray(data.data)) {
-      rawClientes = data.data;
-    }
+  async getAllClientes(token: string, limite: number = 500): Promise<Cliente[]> {
+    try {
+      console.log(`📋 Cargando TODOS los clientes...`);
 
-    const meta = data?.metadata || {};
-    const total = meta.total ?? rawClientes.length;
-    const totalPaginas = meta.total_paginas ?? Math.max(1, Math.ceil(total / limite));
-    const paginaActual = meta.pagina ?? pagina;
+      // Primera petición para obtener metadata
+      const primeraRespuesta = await fetch(`${API_BASE_URL}clientes/todos?limite=${limite}&pagina=1`, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-    return {
-      clientes: rawClientes.map(mapCliente),
-      metadata: {
-        total,
-        pagina: paginaActual,
-        limite: meta.limite ?? limite,
-        total_paginas: totalPaginas,
-        tiene_siguiente: meta.tiene_siguiente ?? paginaActual < totalPaginas,
-        tiene_anterior: meta.tiene_anterior ?? paginaActual > 1,
-        rango_inicio: meta.rango_inicio,
-        rango_fin: meta.rango_fin
+      if (!primeraRespuesta.ok) {
+        const errorText = await primeraRespuesta.text();
+        console.error(`❌ Error ${primeraRespuesta.status} en /clientes/todos:`, errorText);
+        throw new Error(`Error al obtener clientes: ${primeraRespuesta.status} ${primeraRespuesta.statusText}`);
       }
-    };
-  },
 
-  async getAllClientes(token: string, limite: number = 100): Promise<Cliente[]> {
+      const primeraData = await primeraRespuesta.json();
+      
+      // Extraer clientes de la primera página
+      let todosLosClientesRaw: any[] = [];
+      
+      if (primeraData.clientes && Array.isArray(primeraData.clientes)) {
+        todosLosClientesRaw = [...primeraData.clientes];
+      } else if (Array.isArray(primeraData)) {
+        todosLosClientesRaw = [...primeraData];
+      }
+
+      // Obtener metadata
+      const metadata = primeraData.metadata;
+      const totalPaginas = metadata?.total_paginas || 1;
+      const totalClientes = metadata?.total || todosLosClientesRaw.length;
+
+      console.log(`📊 Total: ${totalClientes} clientes en ${totalPaginas} páginas`);
+
+      // Si hay más de una página, obtener el resto en paralelo
+      if (totalPaginas > 1) {
+        console.log(`🚀 Descargando ${totalPaginas - 1} páginas adicionales en paralelo...`);
+        
+        const promesas = [];
+        for (let p = 2; p <= totalPaginas; p++) {
+          promesas.push(
+            fetch(`${API_BASE_URL}clientes/todos?limite=${limite}&pagina=${p}`, {
+              method: 'GET',
+              headers: {
+                'accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            })
+            .then(async (res) => {
+              if (!res.ok) {
+                console.error(`❌ Error en página ${p}: ${res.status}`);
+                return { clientes: [] };
+              }
+              const data = await res.json();
+              return data;
+            })
+          );
+        }
+
+        // Ejecutar todas las peticiones en paralelo
+        const resultados = await Promise.all(promesas);
+
+        // Combinar todos los clientes
+        resultados.forEach((data) => {
+          if (data.clientes && Array.isArray(data.clientes)) {
+            todosLosClientesRaw = [...todosLosClientesRaw, ...data.clientes];
+          } else if (Array.isArray(data)) {
+            todosLosClientesRaw = [...todosLosClientesRaw, ...data];
+          }
+        });
+      }
+
+      console.log(`✅ Total de clientes obtenidos: ${todosLosClientesRaw.length}`);
+
+      // Transformar la respuesta al formato Cliente
+      return todosLosClientesRaw.map((cliente: any) => ({
+
+  async getAllClientes(token: string, pagina: number = 1, limite: number = 500): Promise<Cliente[]> {
     try {
       console.log(`📋 Cargando TODOS los clientes...`);
 

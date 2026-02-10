@@ -48,12 +48,19 @@ export function ClientsList({
   const clearSearch = () => {
   onSearch?.("")
 }
+  onSearch
+}: ClientsListProps) {
+
+  const clearSearch = () => {
+  onSearch?.("")
+}
 
   // Manejar cambio de página
   const handlePageChange = (page: number) => {
     if (onPageChange) {
       onPageChange(page, searchValue
 )
+      onPageChange(page, searchTerm)
     }
   }
 
@@ -84,6 +91,7 @@ export function ClientsList({
           {onPageChange && (
             <Button 
               onClick={() => onPageChange(1, searchValue)}
+              onClick={() => onPageChange(1, searchTerm)}
               variant="outline"
               className="text-xs border-gray-300 text-gray-700 hover:bg-gray-50"
             >
@@ -130,6 +138,12 @@ export function ClientsList({
               disabled={isLoading}
             />
             {searchValue && (
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="pl-9 h-8 text-sm border-gray-300"
+              disabled={isLoading}
+            />
+            {searchValue && (
               <button
                 onClick={clearSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -143,6 +157,10 @@ export function ClientsList({
 
         {/* Badges de filtros activos */}
         {searchValue && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            <Badge variant="secondary" className="text-xs">
+              Buscando: "{searchValue}"
+        {searchTerm && (
           <div className="mt-2 flex flex-wrap gap-1">
             <Badge variant="secondary" className="text-xs">
               Buscando: "{searchValue}"
@@ -173,6 +191,12 @@ export function ClientsList({
               <User className="h-8 w-8 text-gray-300 mx-auto mb-2" />
               <p className="text-sm text-gray-600 mb-1">
                 {searchValue ? "No se encontraron resultados" : "No hay clientes"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {searchValue ? "Ajusta tu búsqueda" : "Agrega tu primer cliente"}
+              </p>
+              {!searchValue && (
+                {searchTerm ? "No se encontraron resultados" : "No hay clientes"}
               </p>
               <p className="text-xs text-gray-500">
                 {searchValue ? "Ajusta tu búsqueda" : "Agrega tu primer cliente"}
